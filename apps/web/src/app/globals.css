@@ -7,6 +7,14 @@
   body {
     @apply font-sans bg-neu-gradient min-h-screen text-slate-700;
   }
+  
+  h2 {
+    @apply text-3xl font-semibold tracking-tight;
+  }
+  
+  p.lead {
+    @apply text-slate-500 max-w-2xl;
+  }
 }
 
 @layer components {
@@ -25,10 +33,7 @@
 
   /* Buttons */
   .btn-primary {
-    @apply bg-primary-500 text-white px-6 py-3 rounded-xl font-semibold 
-           shadow-neu hover:shadow-neuInset hover:scale-105 
-           transition-all duration-200 focus:outline-none 
-           focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2;
+    @apply bg-brand text-white font-medium rounded-lg px-6 py-2 shadow-md transition hover:bg-accent hover:shadow-lg focus-visible:ring-4 focus-visible:ring-brand/30;
   }
   
   .btn-secondary {

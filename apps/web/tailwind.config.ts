@@ -12,6 +12,8 @@ const config: Config = {
         sans: ['Inter', 'sans-serif'],
       },
       colors: {
+        brand: '#0E7490',
+        accent: '#039be5',
         primary: {
           50: '#F0FDFA',
           100: '#CCFBF1',
@@ -19,7 +21,7 @@ const config: Config = {
           600: '#0891B2',
           700: '#0E7490',
         },
-        accent: {
+        colors: {
           orange: '#F97316',
           teal: '#14B8A6',
           'light-blue': '#0EA5E9',
@@ -33,9 +35,9 @@ const config: Config = {
         },
       },
       boxShadow: {
-        neu: '4px 4px 8px #CBD5E1, -4px -4px 8px #FFFFFF',
+        neu: '4px 4px 8px #dbe7f5, -4px -4px 8px #ffffff',
         neuInset: 'inset 4px 4px 8px #CBD5E1, inset -4px -4px 8px #FFFFFF',
-        neuHover: '6px 6px 12px #CBD5E1, -6px -6px 12px #FFFFFF',
+        neuHover: '6px 6px 12px #d1d9e6, -6px -6px 12px #ffffff',
       },
       backgroundImage: {
         'neu-gradient': 'linear-gradient(135deg, #FFFFFF 0%, #F5F7FA 50%, #E2E8F0 100%)',

@@ -50,7 +50,7 @@ export default function HomePage() {
   };
 
   const getFilterChipStyles = (status: 'all' | Status): string => {
-    const baseStyles = 'px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 border';
+    const baseStyles = 'px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 border flex items-center';
     
     if (filter === status) {
       switch (status) {
@@ -61,20 +61,25 @@ export default function HomePage() {
         case 'COMPLETED':
           return `${baseStyles} bg-emerald-100 text-emerald-800 border-emerald-300 shadow-sm`;
         default:
-          return `${baseStyles} bg-slate-100 text-slate-800 border-slate-300 shadow-sm`;
+          return `${baseStyles} bg-brand text-white border-brand shadow-sm`;
       }
     }
     
     return `${baseStyles} bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:border-slate-300`;
   };
 
+  const getStatusCount = (status: 'all' | Status): number => {
+    if (status === 'all') return projects.length;
+    return projects.filter(p => p.status === status).length;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#f0f9ff] via-[#e8f5ff] to-[#f3f4ff]">
-        <div className="mx-auto max-w-7xl pt-12 pb-20 px-4">
+        <div className="mx-auto max-w-7xl pt-20 sm:pt-16 pb-20 px-4">
           <div className="flex justify-center items-center h-64">
             <div className="card-neu p-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand mx-auto"></div>
               <p className="text-neu-gray mt-4 text-center">Loading projects...</p>
             </div>
           </div>
@@ -86,7 +91,7 @@ export default function HomePage() {
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#f0f9ff] via-[#e8f5ff] to-[#f3f4ff]">
-        <div className="mx-auto max-w-7xl pt-12 pb-20 px-4">
+        <div className="mx-auto max-w-7xl pt-20 sm:pt-16 pb-20 px-4">
           <div className="card-neu max-w-md mx-auto p-6 text-center">
             <div className="text-red-500 text-4xl mb-4">⚠️</div>
             <h2 className="heading-secondary mb-2">Something went wrong</h2>
@@ -105,11 +110,14 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f0f9ff] via-[#e8f5ff] to-[#f3f4ff]">
-      <div className="mx-auto max-w-7xl pt-12 pb-20 px-4">
+      <main className="relative mx-auto max-w-7xl pt-20 sm:pt-16 pb-20 px-4">
+        {/* Background accent */}
+        <div className="absolute -z-10 inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#e8f2ff] via-transparent to-transparent" />
+        
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="heading-primary text-slate-800 mb-2">Available Projects</h1>
-            <p className="text-slate-600">
+            <h1 className="text-3xl font-semibold tracking-tight text-slate-800 mb-2">Available Projects</h1>
+            <p className="lead text-slate-500">
               Discover exciting opportunities and start building something amazing
             </p>
           </div>
@@ -122,17 +130,17 @@ export default function HomePage() {
                 onClick={() => setFilter(status)}
                 className={getFilterChipStyles(status)}
               >
-                {getStatusLabel(status)}
                 {status !== 'all' && (
-                  <span className="ml-2 text-xs opacity-75">
-                    ({projects.filter(p => p.status === status).length})
-                  </span>
+                  <div className={`w-2 h-2 rounded-full mr-2 ${
+                    status === 'PENDING' ? 'bg-amber-400' :
+                    status === 'IN_PROGRESS' ? 'bg-blue-400' :
+                    'bg-emerald-400'
+                  }`} />
                 )}
-                {status === 'all' && (
-                  <span className="ml-2 text-xs opacity-75">
-                    ({projects.length})
-                  </span>
-                )}
+                {getStatusLabel(status)}
+                <span className="ml-1 rounded-full bg-slate-200 px-1.5 text-xs">
+                  {getStatusCount(status)}
+                </span>
               </button>
             ))}
           </div>
@@ -166,7 +174,7 @@ export default function HomePage() {
             ))}
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }

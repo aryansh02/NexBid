@@ -1,4 +1,8 @@
+'use client';
+
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { formatDistanceToNow } from 'date-fns';
 import { Project } from '@/types';
 import { money, formatDate, formatTimeAgo } from '@/lib/format';
 import { truncateText } from '@/lib/utils';
@@ -10,8 +14,24 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project, className = '' }: ProjectCardProps) {
+  const getDeadlineDisplay = () => {
+    const deadline = new Date(project.deadline);
+    const now = new Date();
+    const diffInDays = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (diffInDays <= 7) {
+      return `${diffInDays} day${diffInDays !== 1 ? 's' : ''} left`;
+    }
+    return formatDate(project.deadline);
+  };
+
   return (
-    <div className={`card-neu card-neu-hover flex flex-col justify-between h-full min-h-[320px] lg:min-h-[340px] ${className}`}>
+    <motion.article 
+      initial={{ opacity: 0, y: 10 }} 
+      animate={{ opacity: 1, y: 0 }} 
+      transition={{ duration: 0.3 }}
+      className={`card-neu flex flex-col justify-between h-full min-h-[320px] lg:min-h-[340px] hover:-translate-y-1 hover:shadow-neuHover transition-transform ${className}`}
+    >
       {/* Header */}
       <div className="flex justify-between items-start mb-4">
         <h3 className="text-lg font-semibold text-slate-800 line-clamp-2 flex-1 mr-4">
@@ -28,23 +48,26 @@ export default function ProjectCard({ project, className = '' }: ProjectCardProp
       {/* Budget and Deadline */}
       <div className="flex justify-between items-center mb-4">
         <div>
-          <p className="text-sm text-neu-gray">Budget</p>
+          <p className="text-slate-400 text-sm">Budget</p>
           <p className="font-semibold text-emerald-600">
             {money(project.minBudget)} - {money(project.maxBudget)}
           </p>
         </div>
         <div className="text-right">
-          <p className="text-sm text-neu-gray">Deadline</p>
-          <p className="font-medium text-slate-700">{formatDate(project.deadline)}</p>
+          <p className="text-slate-400 text-sm">Deadline</p>
+          <p className="font-medium text-slate-700">{getDeadlineDisplay()}</p>
         </div>
       </div>
       
       {/* Footer with bids count and CTA */}
       <div className="flex justify-between items-center mt-auto">
         <div className="flex items-center space-x-4">
-          <span className="text-sm text-neu-gray">
-            {project._count?.bids || 0} bid{(project._count?.bids || 0) !== 1 ? 's' : ''}
-          </span>
+          <div>
+            <span className="text-slate-400 text-sm">Bids</span>
+            <span className="ml-1 rounded-full bg-slate-200 px-1.5 text-xs">
+              {project._count?.bids || 0}
+            </span>
+          </div>
           <span className="text-xs text-neu-gray">
             {formatTimeAgo(project.createdAt)}
           </span>
@@ -56,6 +79,6 @@ export default function ProjectCard({ project, className = '' }: ProjectCardProp
           View Details
         </Link>
       </div>
-    </div>
+    </motion.article>
   );
 } 
