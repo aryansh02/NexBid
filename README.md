@@ -377,22 +377,6 @@ _Comprehensive project view with tabbed interface for bids, deliverables, and re
 4. Push to branch (`git push origin feature/amazing-feature`)
 5. Open Pull Request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **Next.js Team** for the incredible React framework
-- **Prisma Team** for the excellent ORM and developer experience
-- **Tailwind CSS** for the utility-first CSS framework
-- **Headless UI** for accessible component primitives
-- **Framer Motion** for smooth animations
-
-## 📞 Support
-
-For support, email support@nexbid.com or join our community Discord.
-
 ---
 
 **Built with ❤️ by Aryansh**
