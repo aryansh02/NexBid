@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans bg-neu-gradient min-h-screen text-slate-700;
+  }
+}
+
+@layer components {
+  /* Neumorphic Cards */
+  .card-neu {
+    @apply bg-neu-card shadow-neu rounded-2xl p-6 transition-all duration-200;
+  }
+  
+  .card-neu-hover {
+    @apply hover:shadow-neuHover transform hover:scale-[1.02] transition-all duration-200;
+  }
+  
+  .card-neu-inset {
+    @apply bg-neu-card shadow-neuInset rounded-2xl p-6;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply bg-primary-500 text-white px-6 py-3 rounded-xl font-semibold 
+           shadow-neu hover:shadow-neuInset hover:scale-105 
+           transition-all duration-200 focus:outline-none 
+           focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-neu-card text-slate-700 px-6 py-3 rounded-xl font-semibold 
+           shadow-neu hover:shadow-neuHover hover:scale-105 
+           transition-all duration-200 focus:outline-none 
+           focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-primary-500 text-primary-500 px-6 py-3 rounded-xl font-semibold 
+           hover:bg-primary-500 hover:text-white hover:scale-105 
+           transition-all duration-200 focus:outline-none 
+           focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2;
+  }
+
+  /* Form Elements */
+  .input-neu {
+    @apply w-full px-4 py-3 rounded-xl border-0 shadow-neuInset 
+           bg-neu-card text-slate-700 placeholder-neu-gray
+           focus:shadow-neu focus:outline-none 
+           focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+           transition-all duration-200;
+  }
+  
+  .textarea-neu {
+    @apply w-full px-4 py-3 rounded-xl border-0 shadow-neuInset 
+           bg-neu-card text-slate-700 placeholder-neu-gray resize-none
+           focus:shadow-neu focus:outline-none 
+           focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+           transition-all duration-200;
+  }
+
+  /* Status Badges */
+  .status-pending {
+    @apply bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .status-in-progress {
+    @apply bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .status-completed {
+    @apply bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  /* Typography */
+  .heading-primary {
+    @apply text-3xl font-semibold text-slate-800 tracking-tight;
+  }
+  
+  .heading-secondary {
+    @apply text-2xl font-semibold text-slate-700 tracking-tight;
+  }
+  
+  .text-body {
+    @apply text-slate-600 leading-relaxed;
+  }
+
+  /* Animations */
+  .fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

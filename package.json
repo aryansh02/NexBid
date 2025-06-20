@@ -1,0 +1,36 @@
+{
+  "name": "nexbid",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev --workspaces",
+    "build": "npm run build --workspace=apps/web --workspace=apps/api",
+    "lint": "npm run lint --workspace=apps/web --workspace=apps/api",
+    "test": "npm run test --workspaces",
+    "db:migrate": "cd prisma && npm run migrate",
+    "db:generate": "cd prisma && npm run generate",
+    "db:seed": "cd prisma && npm run seed",
+    "prepare": "husky install",
+    "setup:dev": "bash scripts/dev-setup.sh",
+    "dev:all": "concurrently -k \"npm:dev-api\" \"npm:dev-web\"",
+    "dev-api": "npm --prefix apps/api run dev",
+    "dev-web": "npm --prefix apps/web run dev"
+  },
+  "workspaces": [
+    "apps/*",
+    "prisma"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "concurrently": "^9.1.2",
+    "eslint": "^8.55.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.0",
+    "husky": "^8.0.3",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

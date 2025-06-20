@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  BUYER
+  SELLER
+}
+
+enum Status {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  role      Role
+  password  String
+  createdAt DateTime @default(now())
+  projects  Project[] @relation("BuyerProjects")
+  bids      Bid[]     @relation("SellerBids")
+  reviews   Review[]  @relation("SellerReviews")
+}
+
+model Project {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  minBudget   Int
+  maxBudget   Int
+  deadline    DateTime
+  status      Status    @default(PENDING)
+  buyer       User      @relation("BuyerProjects", fields: [buyerId], references: [id])
+  buyerId     String
+  bids        Bid[]
+  reviews     Review[]
+  sellerId    String?   // selected seller
+  deliverable String?   // file URL
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Bid {
+  id             String   @id @default(uuid())
+  amount         Int
+  etaDays        Int
+  message        String
+  project        Project  @relation(fields: [projectId], references: [id])
+  projectId      String
+  seller         User     @relation("SellerBids", fields: [sellerId], references: [id])
+  sellerId       String
+  accepted       Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId String
+  seller    User     @relation("SellerReviews", fields: [sellerId], references: [id])
+  sellerId  String
+  createdAt DateTime @default(now())
+} 

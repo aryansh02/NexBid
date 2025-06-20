@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://nexbid-api.onrender.com/api/:path*" }
+  ]
+} 
