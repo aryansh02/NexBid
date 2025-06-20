@@ -9,29 +9,25 @@ import { Project, Role } from '@/types';
 import ProjectCard from '@/components/ProjectCard';
 import StatusBadge from '@/components/StatusBadge';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import Protected from '@/components/Protected';
+import { useAuth } from '@/contexts/AuthContext';
 
-// TODO: Replace with actual user context when JWT auth is implemented
-const mockUser = {
-  id: 'buyer-1-id',
-  name: 'John Buyer',
-  email: 'john@example.com',
-  role: 'BUYER' as Role,
-};
-
-export default function DashboardPage() {
+function DashboardContent() {
+  const { user } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'active' | 'completed'>('active');
 
-  // TODO: Get user from auth context
-  const user = mockUser;
-
   useEffect(() => {
-    fetchUserProjects();
-  }, [activeTab]);
+    if (user) {
+      fetchUserProjects();
+    }
+  }, [activeTab, user]);
 
   const fetchUserProjects = async () => {
+    if (!user) return;
+    
     try {
       setLoading(true);
       // For now, fetch all projects and filter on client side
@@ -63,6 +59,10 @@ export default function DashboardPage() {
       setLoading(false);
     }
   };
+
+  if (!user) {
+    return null;
+  }
 
   const getProjectStats = () => {
     const pending = projects.filter(p => p.status === 'PENDING').length;
@@ -323,5 +323,13 @@ export default function DashboardPage() {
         )}
       </div>
     </motion.div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Protected>
+      <DashboardContent />
+    </Protected>
   );
 } 

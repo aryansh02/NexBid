@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { hashPasswordSync } from '../apps/api/src/lib/auth';
 
 const prisma = new PrismaClient();
 
@@ -10,7 +11,7 @@ async function main() {
     data: {
       name: 'Demo Buyer',
       email: 'demo-buyer@nexbid.com',
-      password: 'password', // In real app, this would be hashed
+      password: hashPasswordSync('password'),
       role: 'BUYER',
     },
   });
@@ -19,7 +20,7 @@ async function main() {
     data: {
       name: 'Demo Seller',
       email: 'demo-seller@nexbid.com',
-      password: 'password',
+      password: hashPasswordSync('password'),
       role: 'SELLER',
     },
   });
@@ -29,7 +30,7 @@ async function main() {
     data: {
       name: 'John Buyer',
       email: 'john.buyer@example.com',
-      password: 'hashedpassword123', // In real app, this would be hashed
+      password: hashPasswordSync('hashedpassword123'),
       role: 'BUYER',
     },
   });
@@ -38,7 +39,7 @@ async function main() {
     data: {
       name: 'Jane Client',
       email: 'jane.client@example.com',
-      password: 'hashedpassword123',
+      password: hashPasswordSync('hashedpassword123'),
       role: 'BUYER',
     },
   });
@@ -47,7 +48,7 @@ async function main() {
     data: {
       name: 'Mike Developer',
       email: 'mike.dev@example.com',
-      password: 'hashedpassword123',
+      password: hashPasswordSync('hashedpassword123'),
       role: 'SELLER',
     },
   });
@@ -56,7 +57,7 @@ async function main() {
     data: {
       name: 'Sarah Designer',
       email: 'sarah.design@example.com',
-      password: 'hashedpassword123',
+      password: hashPasswordSync('hashedpassword123'),
       role: 'SELLER',
     },
   });
@@ -65,7 +66,7 @@ async function main() {
     data: {
       name: 'Alex Writer',
       email: 'alex.writer@example.com',
-      password: 'hashedpassword123',
+      password: hashPasswordSync('hashedpassword123'),
       role: 'SELLER',
     },
   });

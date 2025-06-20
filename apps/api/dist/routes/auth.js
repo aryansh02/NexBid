@@ -1,13 +1,171 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const client_1 = require("@prisma/client");
+const zod_1 = require("zod");
+const auth_1 = require("../lib/auth");
+const auth_2 = require("../middleware/auth");
 const router = (0, express_1.Router)();
-// Placeholder auth routes (stretch goal)
-router.post('/signup', (req, res) => {
-    res.status(501).json({ error: 'Authentication not implemented yet' });
+const prisma = new client_1.PrismaClient();
+// Validation schemas
+const signupSchema = zod_1.z.object({
+    name: zod_1.z.string().min(2, 'Name must be at least 2 characters'),
+    email: zod_1.z.string().email('Invalid email address'),
+    password: zod_1.z.string().min(6, 'Password must be at least 6 characters'),
+    role: zod_1.z.enum(['BUYER', 'SELLER'], { required_error: 'Role must be BUYER or SELLER' }),
 });
-router.post('/login', (req, res) => {
-    res.status(501).json({ error: 'Authentication not implemented yet' });
+const loginSchema = zod_1.z.object({
+    email: zod_1.z.string().email('Invalid email address'),
+    password: zod_1.z.string().min(1, 'Password is required'),
+});
+/**
+ * POST /auth/signup
+ * Register a new user
+ */
+router.post('/signup', async (req, res) => {
+    try {
+        const { name, email, password, role } = signupSchema.parse(req.body);
+        // Check if user already exists
+        const existingUser = await prisma.user.findUnique({
+            where: { email },
+        });
+        if (existingUser) {
+            return res.status(400).json({ error: 'User with this email already exists' });
+        }
+        // Hash password
+        const hashedPassword = await (0, auth_1.hashPassword)(password);
+        // Create user
+        const user = await prisma.user.create({
+            data: {
+                name,
+                email,
+                password: hashedPassword,
+                role,
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                createdAt: true,
+            },
+        });
+        // Generate JWT token
+        const token = (0, auth_1.signToken)({
+            id: user.id,
+            email: user.email,
+            role: user.role,
+        });
+        // Set cookie
+        res.cookie('accessToken', token, {
+            httpOnly: true,
+            sameSite: 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            secure: process.env.NODE_ENV === 'production',
+        });
+        res.status(201).json({
+            message: 'User created successfully',
+            user,
+        });
+    }
+    catch (error) {
+        if (error instanceof zod_1.z.ZodError) {
+            return res.status(400).json({
+                error: 'Validation failed',
+                details: error.errors,
+            });
+        }
+        console.error('Signup error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+/**
+ * POST /auth/login
+ * Authenticate user and return JWT token
+ */
+router.post('/login', async (req, res) => {
+    try {
+        const { email, password } = loginSchema.parse(req.body);
+        // Find user by email
+        const user = await prisma.user.findUnique({
+            where: { email },
+        });
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
+        // Compare password
+        const isValidPassword = await (0, auth_1.comparePassword)(password, user.password);
+        if (!isValidPassword) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
+        // Generate JWT token
+        const token = (0, auth_1.signToken)({
+            id: user.id,
+            email: user.email,
+            role: user.role,
+        });
+        // Set cookie
+        res.cookie('accessToken', token, {
+            httpOnly: true,
+            sameSite: 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            secure: process.env.NODE_ENV === 'production',
+        });
+        res.json({
+            message: 'Login successful',
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                createdAt: user.createdAt,
+            },
+        });
+    }
+    catch (error) {
+        if (error instanceof zod_1.z.ZodError) {
+            return res.status(400).json({
+                error: 'Validation failed',
+                details: error.errors,
+            });
+        }
+        console.error('Login error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+/**
+ * GET /auth/me
+ * Get current user information
+ */
+router.get('/me', auth_2.authMiddleware, async (req, res) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: req.user.id },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                createdAt: true,
+            },
+        });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json({ user });
+    }
+    catch (error) {
+        console.error('Get user error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+/**
+ * POST /auth/logout
+ * Clear authentication cookie
+ */
+router.post('/logout', (req, res) => {
+    res.clearCookie('accessToken');
+    res.json({ message: 'Logged out successfully' });
 });
 exports.default = router;
 //# sourceMappingURL=auth.js.map

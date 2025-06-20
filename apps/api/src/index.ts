@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import cookieParser from 'cookie-parser';
 import { PrismaClient } from '@prisma/client';
 
 // Load environment variables
@@ -14,12 +15,16 @@ export const prisma = new PrismaClient();
 import projectRoutes from './routes/projects';
 import authRoutes from './routes/auth';
 
+// Export auth middleware for use in other files
+export { authMiddleware, requireRole, requireAuth } from './middleware/auth';
+
 const app = express();
 const PORT = process.env.PORT || 8080;
 
 // Middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // CORS configuration
 app.use(cors({

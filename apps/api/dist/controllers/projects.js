@@ -56,8 +56,8 @@ exports.getProjects = getProjects;
 const createProject = async (req, res, next) => {
     try {
         const data = validation_1.createProjectSchema.parse(req.body);
-        // TODO: Get buyerId from JWT token (for now using mock data)
-        const buyerId = req.body.buyerId; // This should come from JWT middleware
+        // Get buyerId from authenticated user
+        const buyerId = req.user.id;
         const project = await prisma.project.create({
             data: {
                 ...data,
@@ -119,8 +119,8 @@ const createBid = async (req, res, next) => {
     try {
         const { id: projectId } = validation_1.uuidParamSchema.parse(req.params);
         const data = validation_1.createBidSchema.parse(req.body);
-        // TODO: Get sellerId from JWT token
-        const sellerId = req.body.sellerId; // This should come from JWT middleware
+        // Get sellerId from authenticated user
+        const sellerId = req.user.id;
         // Check if project exists and is still pending
         const project = await prisma.project.findUnique({
             where: { id: projectId },
@@ -206,6 +206,10 @@ const acceptBid = async (req, res, next) => {
             if (bid.project.status !== 'PENDING') {
                 throw new Error('Project is not in pending status');
             }
+            // Check if the authenticated user is the project owner
+            if (bid.project.buyerId !== req.user.id) {
+                throw new Error('Only the project owner can accept bids');
+            }
             // Update bid as accepted
             const updatedBid = await tx.bid.update({
                 where: { id: bidId },
@@ -256,6 +260,12 @@ const updateProjectStatus = async (req, res, next) => {
         });
         if (!project) {
             return res.status(404).json({ error: 'Project not found' });
+        }
+        // Check if user is authorized to update this project
+        const isOwner = project.buyerId === req.user.id;
+        const isAssignedSeller = project.sellerId === req.user.id;
+        if (!isOwner && !isAssignedSeller) {
+            return res.status(403).json({ error: 'Not authorized to update this project' });
         }
         // Validate status transition
         if (project.status === 'COMPLETED') {

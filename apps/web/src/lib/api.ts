@@ -111,17 +111,30 @@ export const api = {
       body: JSON.stringify(data),
     }),
 
-  // Auth (placeholder)
-  login: (data: any) =>
-    apiRequest<any>('/auth/login', {
+  // Auth
+  login: (data: { email: string; password: string }) =>
+    apiRequest<{ message: string; user: any }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify(data),
+      credentials: 'include',
     }),
 
-  signup: (data: any) =>
-    apiRequest<any>('/auth/signup', {
+  signup: (data: { name: string; email: string; password: string; role: 'BUYER' | 'SELLER' }) =>
+    apiRequest<{ message: string; user: any }>('/auth/signup', {
       method: 'POST',
       body: JSON.stringify(data),
+      credentials: 'include',
+    }),
+
+  getMe: () =>
+    apiRequest<{ user: any }>('/auth/me', {
+      credentials: 'include',
+    }),
+
+  logout: () =>
+    apiRequest<{ message: string }>('/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
     }),
 };
 

@@ -10,24 +10,25 @@ import {
   createReview,
 } from '../controllers/projects';
 import { upload, uploadDeliverable } from '../controllers/upload';
+import { authMiddleware, requireRole, requireAuth } from '../middleware/auth';
 
 const router = Router();
 
 // Project routes
-router.get('/', getProjects);                    // GET /api/projects
-router.post('/', createProject);                 // POST /api/projects
-router.get('/:id', getProject);                  // GET /api/projects/:id
+router.get('/', getProjects);                    // GET /api/projects (public)
+router.post('/', authMiddleware, requireRole('BUYER'), createProject);                 // POST /api/projects (BUYER only)
+router.get('/:id', getProject);                  // GET /api/projects/:id (public)
 
 // Bid routes
-router.post('/:id/bids', createBid);             // POST /api/projects/:id/bids
-router.get('/:id/bids', getProjectBids);         // GET /api/projects/:id/bids
-router.post('/:id/accept', acceptBid);           // POST /api/projects/:id/accept
+router.post('/:id/bids', authMiddleware, requireRole('SELLER'), createBid);             // POST /api/projects/:id/bids (SELLER only)
+router.get('/:id/bids', getProjectBids);         // GET /api/projects/:id/bids (public)
+router.post('/:id/accept', authMiddleware, requireRole('BUYER'), acceptBid);           // POST /api/projects/:id/accept (BUYER only)
 
 // Status and file upload routes
-router.patch('/:id/status', updateProjectStatus); // PATCH /api/projects/:id/status
-router.post('/:id/upload', upload.single('deliverable'), uploadDeliverable); // POST /api/projects/:id/upload
+router.patch('/:id/status', authMiddleware, requireAuth, updateProjectStatus); // PATCH /api/projects/:id/status (authenticated)
+router.post('/:id/upload', authMiddleware, requireRole('SELLER'), upload.single('deliverable'), uploadDeliverable); // POST /api/projects/:id/upload (SELLER only)
 
-// Review routes (stretch goal)
-router.post('/:id/review', createReview);        // POST /api/projects/:id/review
+// Review routes
+router.post('/:id/review', authMiddleware, requireRole('BUYER'), createReview);        // POST /api/projects/:id/review (BUYER only)
 
 export default router; 
