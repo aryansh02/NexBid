@@ -5,7 +5,26 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Starting database seeding...');
 
-  // Create sample users
+  // Create QA test users
+  const demoBuyer = await prisma.user.create({
+    data: {
+      name: 'Demo Buyer',
+      email: 'demo-buyer@nexbid.com',
+      password: 'password', // In real app, this would be hashed
+      role: 'BUYER',
+    },
+  });
+
+  const demoSeller = await prisma.user.create({
+    data: {
+      name: 'Demo Seller',
+      email: 'demo-seller@nexbid.com',
+      password: 'password',
+      role: 'SELLER',
+    },
+  });
+
+  // Create additional sample users
   const buyer1 = await prisma.user.create({
     data: {
       name: 'John Buyer',
@@ -51,9 +70,22 @@ async function main() {
     },
   });
 
-  console.log('✅ Created sample users');
+  console.log('✅ Created sample users (including QA test users)');
 
   // Create sample projects
+  // QA Demo project (PENDING status)
+  const demoProject = await prisma.project.create({
+    data: {
+      title: 'Modern Landing Page Design',
+      description: 'Need a stunning landing page for our SaaS product. Looking for modern design with smooth animations, responsive layout, and conversion optimization. Should include hero section, features, testimonials, and pricing.',
+      minBudget: 1500,
+      maxBudget: 3000,
+      deadline: new Date('2024-04-01'),
+      status: 'PENDING',
+      buyerId: demoBuyer.id,
+    },
+  });
+
   const project1 = await prisma.project.create({
     data: {
       title: 'E-commerce Website Development',
@@ -108,6 +140,37 @@ async function main() {
   console.log('✅ Created sample projects');
 
   // Create sample bids
+  // Bids for demo project
+  await prisma.bid.create({
+    data: {
+      amount: 2200,
+      etaDays: 14,
+      message: 'I specialize in modern landing page design with a focus on conversion optimization. I can create a stunning, responsive design that will help boost your conversions.',
+      projectId: demoProject.id,
+      sellerId: demoSeller.id,
+    },
+  });
+
+  await prisma.bid.create({
+    data: {
+      amount: 2800,
+      etaDays: 21,
+      message: 'I am a UI/UX designer with 4+ years of experience. I can deliver a premium landing page with smooth animations and mobile-first design approach.',
+      projectId: demoProject.id,
+      sellerId: seller2.id,
+    },
+  });
+
+  await prisma.bid.create({
+    data: {
+      amount: 1800,
+      etaDays: 10,
+      message: 'Quick turnaround specialist! I can create a clean, modern landing page that converts. Includes revisions and source files.',
+      projectId: demoProject.id,
+      sellerId: seller1.id,
+    },
+  });
+
   await prisma.bid.create({
     data: {
       amount: 3500,

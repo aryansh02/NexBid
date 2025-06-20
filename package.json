@@ -13,7 +13,9 @@
     "setup:dev": "bash scripts/dev-setup.sh",
     "dev:all": "concurrently -k \"npm:dev-api\" \"npm:dev-web\"",
     "dev-api": "npm --prefix apps/api run dev",
-    "dev-web": "npm --prefix apps/web run dev"
+    "dev-web": "npm --prefix apps/web run dev",
+    "seed:qa": "ts-node prisma/seed.ts",
+    "screenshots": "node scripts/take-screenshots.js"
   },
   "workspaces": [
     "apps/*",
@@ -27,6 +29,8 @@
     "eslint-plugin-import": "^2.29.0",
     "husky": "^8.0.3",
     "prettier": "^3.1.0",
+    "puppeteer": "^24.10.2",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.0"
   },
   "engines": {

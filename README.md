@@ -115,6 +115,7 @@ NexBid/
 ### Local Setup (One-liner)
 
 ```bash
+cp .env.example .env  # Copy environment template first
 npm run setup:dev && npm run dev:all   # spins Docker DB, migrates, starts API+Web
 ```
 
@@ -122,8 +123,13 @@ This command will:
 
 1. Spin up PostgreSQL via Docker Compose
 2. Wait for database to be ready
-3. Run Prisma migrations and seed data
+3. Run Prisma migrations and seed data (including QA test users)
 4. Start both API (port 8080) and Web (port 3000) concurrently
+
+**QA Test Users:**
+
+- Buyer: `demo-buyer@nexbid.com` / `password`
+- Seller: `demo-seller@nexbid.com` / `password`
 
 ### Manual Setup (if needed)
 
@@ -263,7 +269,19 @@ npm run db:studio
 
 # Generate new migration
 npm run db:migrate
+
+# Seed QA test data
+npm run seed:qa
 ```
+
+### Screenshots
+
+```bash
+# Take screenshots (requires running servers)
+npm run screenshots
+```
+
+Screenshots are automatically saved to `docs/` directory.
 
 ## 📸 Screenshots
 
@@ -271,13 +289,13 @@ npm run db:migrate
 
 _Modern dashboard with neumorphic design showcasing project management interface_
 
-![Dashboard Screenshot](screenshots/dashboard.png)
+![Dashboard Screenshot](docs/dashboard.png)
 
 ### Project Detail Page
 
 _Comprehensive project view with tabbed interface for bids, deliverables, and reviews_
 
-![Project Detail Screenshot](screenshots/project-detail.png)
+![Project Detail Screenshot](docs/project.png)
 
 ## 🚀 Deployment
 
