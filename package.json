@@ -15,7 +15,8 @@
     "dev-api": "npm --prefix apps/api run dev",
     "dev-web": "npm --prefix apps/web run dev",
     "seed:qa": "ts-node prisma/seed.ts",
-    "screenshots": "node scripts/take-screenshots.js"
+    "screenshots": "node scripts/take-screenshots.js",
+    "smoke": "curl -s http://localhost:8080/api/health && echo ' API ✅' && curl -I -s http://localhost:3000 | head -n 1 && echo ' Frontend ✅'"
   },
   "workspaces": [
     "apps/*",

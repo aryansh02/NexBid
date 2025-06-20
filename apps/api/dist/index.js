@@ -17,6 +17,7 @@ exports.prisma = new client_1.PrismaClient();
 // Import routes
 const projects_1 = __importDefault(require("./routes/projects"));
 const auth_1 = __importDefault(require("./routes/auth"));
+const health_1 = __importDefault(require("./routes/health"));
 // Export auth middleware for use in other files
 var auth_2 = require("./middleware/auth");
 Object.defineProperty(exports, "authMiddleware", { enumerable: true, get: function () { return auth_2.authMiddleware; } });
@@ -35,13 +36,11 @@ app.use((0, cors_1.default)({
 }));
 // Serve static files (uploads)
 app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, '../uploads')));
-// API Routes
+// Health check (no database required)
+app.use('/api', health_1.default);
+// API Routes (require database)
 app.use('/api/projects', projects_1.default);
 app.use('/api/auth', auth_1.default);
-// Health check
-app.get('/api/health', (req, res) => {
-    res.json({ status: 'OK', timestamp: new Date().toISOString() });
-});
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error('Error:', err);
@@ -57,12 +56,19 @@ app.use('*', (req, res) => {
 // Start server
 async function startServer() {
     try {
-        // Test database connection
-        await exports.prisma.$connect();
-        console.log('✅ Database connected successfully');
+        // Try to connect to database, but don't fail if it's not available
+        try {
+            await exports.prisma.$connect();
+            console.log('✅ Database connected successfully');
+        }
+        catch (dbError) {
+            console.warn('⚠️ Database not available, running in limited mode');
+            console.warn('Database error:', dbError);
+        }
         app.listen(PORT, () => {
             console.log(`🚀 Server running on port ${PORT}`);
             console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+            console.log(`🌐 Frontend: http://localhost:3000`);
         });
     }
     catch (error) {
