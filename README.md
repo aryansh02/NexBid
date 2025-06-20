@@ -131,6 +131,28 @@ This command will:
 - Buyer: `demo-buyer@nexbid.com` / `password`
 - Seller: `demo-seller@nexbid.com` / `password`
 
+## 🔐 Authentication
+
+NexBid features a complete JWT-based authentication system with role-based access control.
+
+### Authentication Flow
+
+1. **Sign Up**: `/auth/signup` - Create new buyer or seller account
+2. **Sign In**: `/auth/login` - Authenticate with email/password
+3. **Protected Routes**: Dashboard, project creation, bidding require authentication
+4. **Role-Based Access**:
+   - Buyers can post projects and accept bids
+   - Sellers can browse projects and submit bids
+   - Automatic redirects based on user role
+
+### Security Features
+
+- JWT tokens with 7-day expiry
+- HttpOnly, SameSite cookies
+- Bcrypt password hashing (10 rounds)
+- Role-based route protection
+- Secure API endpoint authorization
+
 ### Manual Setup (if needed)
 
 1. **Clone the repository**
@@ -203,26 +225,33 @@ This command will:
 
 ## 🔌 API Endpoints
 
+### Authentication
+
+- `POST /api/auth/signup` - Register new user (buyer/seller)
+- `POST /api/auth/login` - Authenticate user and set JWT cookie
+- `GET /api/auth/me` - Get current user info (protected)
+- `POST /api/auth/logout` - Clear authentication cookie
+
 ### Projects
 
-- `GET /api/projects` - List projects with filtering
-- `POST /api/projects` - Create new project
-- `GET /api/projects/:id` - Get project details
-- `PATCH /api/projects/:id/status` - Update project status
+- `GET /api/projects` - List projects with filtering (public)
+- `POST /api/projects` - Create new project (BUYER only)
+- `GET /api/projects/:id` - Get project details (public)
+- `PATCH /api/projects/:id/status` - Update project status (authenticated)
 
 ### Bidding
 
-- `POST /api/projects/:id/bids` - Place bid on project
-- `GET /api/projects/:id/bids` - Get project bids
-- `POST /api/projects/:id/accept` - Accept bid (transactional)
+- `POST /api/projects/:id/bids` - Place bid on project (SELLER only)
+- `GET /api/projects/:id/bids` - Get project bids (public)
+- `POST /api/projects/:id/accept` - Accept bid (BUYER only)
 
 ### File Management
 
-- `POST /api/projects/:id/upload` - Upload deliverables
+- `POST /api/projects/:id/upload` - Upload deliverables (SELLER only)
 
 ### Reviews
 
-- `POST /api/projects/:id/review` - Submit project review
+- `POST /api/projects/:id/review` - Submit project review (BUYER only)
 
 ## 🎯 User Journey
 
