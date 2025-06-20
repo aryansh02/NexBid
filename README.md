@@ -395,4 +395,4 @@ For support, email support@nexbid.com or join our community Discord.
 
 ---
 
-**Built with ❤️ by the NexBid Team**
+**Built with ❤️ by Aryansh**
