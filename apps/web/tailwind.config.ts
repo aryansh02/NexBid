@@ -21,6 +21,9 @@ const config: Config = {
         },
         accent: {
           orange: '#F97316',
+          teal: '#14B8A6',
+          'light-blue': '#0EA5E9',
+          cyan: '#06B6D4',
         },
         neu: {
           bg: '#F5F7FA',
