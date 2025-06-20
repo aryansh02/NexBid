@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { api } from '@/lib/api';
 import { Project, ProjectsResponse, Status } from '@/types';
 import ProjectCard from '@/components/ProjectCard';
@@ -11,10 +10,6 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | Status>('all');
-
-  useEffect(() => {
-    fetchProjects();
-  }, [filter]);
 
   const fetchProjects = async () => {
     try {
@@ -32,6 +27,10 @@ export default function HomePage() {
     }
   };
 
+  useEffect(() => {
+    fetchProjects();
+  }, [filter]);
+
   const getStatusLabel = (status: string): string => {
     switch (status) {
       case 'PENDING':
@@ -47,28 +46,20 @@ export default function HomePage() {
 
   if (loading) {
     return (
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="max-w-7xl mx-auto py-8"
-      >
+      <div className="max-w-7xl mx-auto py-8">
         <div className="flex justify-center items-center h-64">
           <div className="card-neu p-8">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto"></div>
             <p className="text-neu-gray mt-4 text-center">Loading projects...</p>
           </div>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="max-w-7xl mx-auto py-8"
-      >
+      <div className="max-w-7xl mx-auto py-8">
         <div className="card-neu max-w-md mx-auto p-6 text-center">
           <div className="text-red-500 text-4xl mb-4">⚠️</div>
           <h2 className="heading-secondary mb-2">Something went wrong</h2>
@@ -80,17 +71,12 @@ export default function HomePage() {
             Try again
           </button>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="max-w-7xl mx-auto py-8"
-    >
+    <div className="max-w-7xl mx-auto py-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <h1 className="heading-primary">Available Projects</h1>
         
@@ -113,11 +99,7 @@ export default function HomePage() {
       </div>
 
       {projects.length === 0 ? (
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center py-16"
-        >
+        <div className="text-center py-16">
           <div className="card-neu max-w-md mx-auto p-8">
             <div className="text-6xl mb-4">📝</div>
             <h2 className="heading-secondary mb-4">No projects found</h2>
@@ -134,26 +116,16 @@ export default function HomePage() {
               Post the first project
             </a>
           </div>
-        </motion.div>
+        </div>
       ) : (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
-        >
-          {projects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {projects.map((project) => (
+            <div key={project.id}>
               <ProjectCard project={project} />
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 }

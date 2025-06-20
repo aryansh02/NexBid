@@ -32,9 +32,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const fetchUser = async () => {
     try {
-      const response = await api.getMe();
+      // Add timeout to prevent hanging
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Auth timeout')), 5000)
+      );
+      
+      const response = await Promise.race([
+        api.getMe(),
+        timeoutPromise
+      ]);
       setUser(response.user);
     } catch (error) {
+      console.warn('Auth fetch failed:', error);
       setUser(null);
     } finally {
       setLoading(false);
